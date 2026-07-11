@@ -1,0 +1,24 @@
+# rule on docker file must caplital    image in debain  || albain  is very big but it easy to use 
+
+# not allow to use the lastest image may it have a pages so we use the last one          #version 12 have name 
+FROM   debain:12
+
+RUN apt-get update && \     
+    apt-get install -y mariadb-server && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+#?
+
+COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf   
+# mariadb have a configuration file  
+# so it copy it to the continuer 
+
+COPY tools/setup.sh /setup.sh   
+# setup is a script sql > crete the database with use  
+RUN chmod +x /setup.sh
+
+EXPOSE 3306  
+ # port for the mariadb we use in the network to connect 
+ENTRYPOINT ["/setup.sh"] 
+# runs this first 
