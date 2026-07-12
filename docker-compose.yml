@@ -2,7 +2,7 @@ services: # Mandatory Inception services: MariaDB + WordPress + NGINX
   mariadb:
     container_name: mariadb
     build:
-      context: ./requirements/mariadb # Build MariaDB image from local Dockerfile
+      context: ./srcs/requirements/mariadb # Build MariaDB image from local Dockerfile
     image: mariadb # Local image tag name
     env_file:
       - .env # Load DB credentials/config from .env
@@ -15,7 +15,7 @@ services: # Mandatory Inception services: MariaDB + WordPress + NGINX
   wordpress:
     container_name: wordpress
     build:
-      context: ./requirements/wordpress # Build WordPress/PHP-FPM image locally
+      context: ./srcs/requirements/wordpress # Build WordPress/PHP-FPM image locally
     image: wordpress # Local image tag name
     env_file:
       - .env # Load WordPress + DB connection variables
@@ -30,7 +30,7 @@ services: # Mandatory Inception services: MariaDB + WordPress + NGINX
   nginx:
     container_name: nginx
     build:
-      context: ./requirements/nginx # Build NGINX image locally
+      context: ./srcs/requirements/nginx # Build NGINX image locally
     image: nginx # Local image tag name
     env_file:
       - .env # Optional runtime variables from .env

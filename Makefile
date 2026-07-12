@@ -1,4 +1,4 @@
-COMPOSE_FILE = ./srcs/docker-compose.yml
+COMPOSE_FILE = ./docker-compose.yml
 COMPOSE_CMD = docker compose -f $(COMPOSE_FILE)
 
 DATA_DIR = /home/$(USER)/data

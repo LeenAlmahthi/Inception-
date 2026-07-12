@@ -1,7 +1,7 @@
 # rule on docker file must caplital    image in debain  || albain  is very big but it easy to use 
 
 # not allow to use the lastest image may it have a pages so we use the last one          #version 12 have name 
-FROM   debain:12
+FROM debian:12
 
 RUN apt-get update && \     
     apt-get install -y mariadb-server && \
@@ -10,7 +10,7 @@ RUN apt-get update && \
 
 #?
 
-COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf   
+COPY conf/mariadb.conf /etc/mysql/mariadb.conf.d/50-server.cnf   
 # mariadb have a configuration file  
 # so it copy it to the continuer 
 
