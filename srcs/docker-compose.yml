@@ -1,64 +1,64 @@
-services:     # not allow \t 
+services: # Mandatory Inception services: MariaDB + WordPress + NGINX
   mariadb:
-    container_name: mariadb 
-    build:   
-      context: ./requirements/mariadb  #location the docker file 
-    image: mariadb   # name image same the name of the servers 
+    container_name: mariadb
+    build:
+      context: ./requirements/mariadb # Build MariaDB image from local Dockerfile
+    image: mariadb # Local image tag name
     env_file:
-      - .env   # element we add a .env
-    restart: always   # in any failure we must rebuild the image 
+      - .env # Load DB credentials/config from .env
+    restart: always # Restart container automatically if it stops
     volumes:
-      - mariadb_data:/var/lib/mysql  # read write the data to keep the data when we close the continuer 
+      - mariadb_data:/var/lib/mysql # Persist MariaDB database files
     networks:
-      - inception   # network name   
+      - inception # Internal Docker network shared by all services
 
   wordpress:
     container_name: wordpress
     build:
-      context: ./requirements/wordpress
-    image: wordpress
+      context: ./requirements/wordpress # Build WordPress/PHP-FPM image locally
+    image: wordpress # Local image tag name
     env_file:
-      - .env
-    restart: always
+      - .env # Load WordPress + DB connection variables
+    restart: always # Restart container automatically if it stops
     depends_on:
-      - mariadb    # 
+      - mariadb # Start order: MariaDB first, then WordPress
     volumes:
-      - wordpress_data:/var/www/html
+      - wordpress_data:/var/www/html # Persist WordPress files (core/content/uploads)
     networks:
       - inception
 
   nginx:
     container_name: nginx
     build:
-      context: ./requirements/nginx
-    image: nginx
+      context: ./requirements/nginx # Build NGINX image locally
+    image: nginx # Local image tag name
     env_file:
-      - .env
-    restart: always
+      - .env # Optional runtime variables from .env
+    restart: always # Restart container automatically if it stops
     depends_on:
-      - wordpress
+      - wordpress # Start order: WordPress before NGINX
     ports:
-      - "443:443" #  inter point the browser how connect with it why ? 
+      - "443:443" # Mandatory public HTTPS entrypoint
     volumes:
-      - wordpress_data:/var/www/html # why add a wordpress ?
+      - wordpress_data:/var/www/html # Read WordPress files to serve site through NGINX
     networks:
       - inception
 
-volumes: 
-  mariadb_data:  # here we save the data 
+volumes:
+  mariadb_data: # Host-persistent storage for MariaDB data
     driver: local
     driver_opts:
       type: none
-      device: /home/${USER}/data/mariadb # user == my intra name    
-      o: bind 
+      device: /home/${USER}/data/mariadb # Required host path for DB persistence
+      o: bind
 
-  wordpress_data: # here we save the file images  
+  wordpress_data: # Host-persistent storage for WordPress files
     driver: local
     driver_opts:
       type: none
       device: /home/${USER}/data/wordpress
       o: bind
 
-networks:   # host network == my network            docker network == not allow to use it 
+networks: # Dedicated internal bridge network (not host mode)
   inception:
     driver: bridge
